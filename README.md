@@ -85,3 +85,6 @@ select pacggi from  wwadhesf.adh1pacpf order by f_idpret, c_dateeffetpalier;
 -- table P_IDGARGARANTIEINCLUSE                     
 select * from WWANNEXF.pa1xggipf;
 ```
+
+## Les prêts
+t4pprtpf
