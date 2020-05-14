@@ -75,3 +75,6 @@ select prtdrt from WWADHESF.t4pprtpf;
 ```
 Information qui vient du métier Oui, la date pivot est bien la date de référence tarifaire (date qui est présente dans nos BDD puisqu'elle apparaît sur l'OAV).
 
+## Le taux Décès
+
+c'est la garantie 3 : pacggi : C'est aussi une règle métier.
