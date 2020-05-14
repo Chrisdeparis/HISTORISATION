@@ -78,3 +78,10 @@ Information qui vient du métier Oui, la date pivot est bien la date de référe
 ## Le taux Décès
 
 c'est la garantie 3 : pacggi : C'est aussi une règle métier.
+
+```
+-- La colonne garantie
+select pacggi from  wwadhesf.adh1pacpf order by f_idpret, c_dateeffetpalier;
+-- table P_IDGARGARANTIEINCLUSE                     
+select * from WWANNEXF.pa1xggipf;
+```
