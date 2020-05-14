@@ -68,3 +68,9 @@ A changer car la demande est différente :
 
 > fin Si  
 
+## La date de référence tarifaire
+
+```
+select prtdrt from WWADHESF.t4pprtpf;
+```
+
