@@ -16,7 +16,7 @@ le palier c'est le détail des cotisations par garantie qu'on prélève aux assu
 
 ## Recherche Taux Taxe
 
-```
+```sql
 // Recherche taux taxe par garantie
 //---------------------------------
 begsr rechercheTauxTaxe;
@@ -79,7 +79,7 @@ Information qui vient du métier Oui, la date pivot est bien la date de référe
 
 c'est la garantie 3 : pacggi : C'est aussi une règle métier.
 
-```
+```sql
 -- La colonne garantie
 select pacggi from  wwadhesf.adh1pacpf order by f_idpret, c_dateeffetpalier;
 -- table P_IDGARGARANTIEINCLUSE                     
