@@ -73,4 +73,5 @@ A changer car la demande est différente :
 ```
 select prtdrt from WWADHESF.t4pprtpf;
 ```
+Information qui vient du métier Oui, la date pivot est bien la date de référence tarifaire (date qui est présente dans nos BDD puisqu'elle apparaît sur l'OAV).
 
