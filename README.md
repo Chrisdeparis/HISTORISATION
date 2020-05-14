@@ -55,3 +55,12 @@ begsr rechercheTauxTaxe;
   endif;
 endsr;
 ```
+A changer car la demande est différente : 
+
+> lecture palier
+> si palier concerne une oav crée avant 01/01/2019
+> taux dc = 0 / taux autre garantie = 9
+> sinon (oav crée à partir 01/01/2019)
+> taux dc = 9 / taux autre garantie = 9
+> fin Si  
+
