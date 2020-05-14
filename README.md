@@ -13,3 +13,45 @@ le palier c'est le détail des cotisations par garantie qu'on prélève aux assu
 - le montant HT
 - le montant de taxe
 - et maintenant on doit rajouter le taux => C_TAUX dans ADH1PACPF :ok_hand::ok_hand:
+
+## Recherche Taux Taxe
+
+```
+// Recherche taux taxe par garantie
+//---------------------------------
+begsr rechercheTauxTaxe;
+
+  errRechercheTauxTaxe = *off;
+  clear TauxTaxeDS;
+  clear rc;
+  clear wTauxTva;
+  clear wmontantht;
+  clear wmontanttaxe;
+
+  wdate8 = %dec(wprtdrt);
+
+  TauxTaxeDS.Pays = wcodePays;
+  TauxTaxeDS.Cie = wCompagnie;
+  TauxTaxeDS.Garantie = wgarantie;
+  TauxTaxeDS.DateCalcul = wdate8;
+
+  //Récupération du taux de taxe
+  rc = m_getTauxTaxe(TauxTaxeDS);
+
+  if rc = 0;
+    wTauxTva = TauxTaxeDS.TauxTaxe;
+    wTauxTva = (wTauxTva / 100) + 1;
+    wmontantHT = %dech(wmontantPalier/wTauxTva:11:2);
+    wmontantTaxe = wmontantPalier - wmontantHT ;
+  else;
+    errRechercheTauxTaxe = *on;
+    m_error('000458'
+            :*omit
+            :'errreur recherche taux de taxe pour le prêt, '
+            +%char(wpackro)
+            :'*Other'
+            :'INFO'
+            :%char(rc));
+  endif;
+endsr;
+```
