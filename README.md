@@ -93,16 +93,16 @@ t4pprtpf
 
 |    NOMS COURT                  |      ALIAS                     |
 | :----------------------------: | :----------------------------: |
-| PACPAC     CONDEN      11  0   |  =>   P_IDPALIERCOTISATION     |
-| PACMPA     CONDEN      11  2   |  =>   C_MONTANTPALIER          | 
-| PACDEP     DATE           10   |  =>   C_DATEEFFETPALIER        |
-| PACDMO     HORODAT     26  6   |  =>   C_DATEMODIFICATION       | 
-| PACKRO     CONDEN      11  0   |  =>   F_IDPRET                 | 
-| PACGGI     CONDEN       5  0   |  =>   F_IDGARGARANTIEINCLUSE   | 
-| PACTAU     CONDEN       5  3   |  =>   C_TAUX                   |  
-| PACMTX     CONDEN      11  2   |  =>   C_MONTANTTAXE            |  
-| PACMHT     CONDEN      11  2   |  =>   C_MONTANTHT              |  
-| PACPRO     ALPHA          10   |  =>   F_PROFIL                 | 
+| PACPAC     CONDEN      11  0   |     P_IDPALIERCOTISATION       |
+| PACMPA     CONDEN      11  2   |     C_MONTANTPALIER            | 
+| PACDEP     DATE           10   |     C_DATEEFFETPALIER          |
+| PACDMO     HORODAT     26  6   |     C_DATEMODIFICATION         | 
+| PACKRO     CONDEN      11  0   |     F_IDPRET                   | 
+| PACGGI     CONDEN       5  0   |     F_IDGARGARANTIEINCLUSE     | 
+| PACTAU     CONDEN       5  3   |     C_TAUX                     |  
+| PACMTX     CONDEN      11  2   |     C_MONTANTTAXE              |  
+| PACMHT     CONDEN      11  2   |     C_MONTANTHT                |  
+| PACPRO     ALPHA          10   |     F_PROFIL                   | 
 
 Utiliser de préférences les alias dans le code pour la lisibilité et compréhension du code.
 
