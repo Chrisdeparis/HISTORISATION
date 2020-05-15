@@ -106,3 +106,7 @@ t4pprtpf
 
 Utiliser de préférences les alias dans le code pour la lisibilité et compréhension du code.
 
+Les 3 variables à manipuler dans ce programme sont donc : 
+- F_IDPRET
+- F_IDGARGARANTIEINCLUSE
+- C_TAUX
