@@ -113,3 +113,5 @@ t4pprtpf
 | PACPRO     ALPHA          10   |  =>   F_PROFIL                  |
 | ------------------------------ | ------------------------------- |
 
+Utiliser de préférences les alias dans le code pour la lisibilité et compréhension du code.
+
