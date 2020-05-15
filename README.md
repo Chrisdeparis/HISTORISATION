@@ -91,10 +91,11 @@ t4pprtpf
 
 ## ADH1PACPF
 
+|    NOMS COURT                  |      ALIAS                     |
+| :----------------------------: | :----------------------------: |
 | PACPAC     CONDEN      11  0   |  =>   P_IDPALIERCOTISATION     |
-| ------------------------------ | ------------------------------- 
 | PACMPA     CONDEN      11  2   |  =>   C_MONTANTPALIER          | 
-| PACDEP     DATE           10   |   =>   C_DATEEFFETPALIER       |
+| PACDEP     DATE           10   |  =>   C_DATEEFFETPALIER        |
 | PACDMO     HORODAT     26  6   |  =>   C_DATEMODIFICATION       | 
 | PACKRO     CONDEN      11  0   |  =>   F_IDPRET                 | 
 | PACGGI     CONDEN       5  0   |  =>   F_IDGARGARANTIEINCLUSE   | 
