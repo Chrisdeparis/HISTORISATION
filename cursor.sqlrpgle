@@ -83,3 +83,19 @@
 
      *inlr = *on;
  
+// Cursor avec Update
+
+EXEC SQL
+        declare CURS_01 cursor for
+        select corkroTmp,
+               cornumTmp, corordTmp,
+               cornatTmp,
+               corkrgTmp,
+               apedemTmp
+        from pcorTmp
+        order by cornatTmp, apedemTmp, corkroTmp
+        for update with nc;
+EXEC SQL
+         update pcorTmp
+         set corkrgTmp = :corkroTmp
+         where current of CURS_01;
