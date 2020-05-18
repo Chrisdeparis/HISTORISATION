@@ -1,4 +1,4 @@
-
+-- les deux tables à modifier avec le c_taux
 -- table ADH1H43PF
 select * 
 from WWADHESF.ADH1H43PF 
