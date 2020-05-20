@@ -104,6 +104,21 @@ t4pprtpf
 | PACMHT     CONDEN      11  2   |     C_MONTANTHT                |  
 | PACPRO     ALPHA          10   |     F_PROFIL                   | 
 
+## ADH1H43PF
+
+|   NOMS COURT                   |                                |
+| :----------------------------: | :----------------------------: |
+| H43DMO TIMESTAMP               | C_dateModification             |
+| H43MPB DECIMAL(11, 2)          | C_montantPalier_Avant          |
+| H43DEB DATE                    | C_dateEffetPalier_Avant        |
+| H43NLI DECIMAL(3, 0)           | P_numeroLigne                  |
+| H43KMV DECIMAL(11, 0)          | X_idHistoMouvement             |
+| H43GGI DECIMAL(5, 0)           | F_idGarGarantieIncluse         |
+| H43TAU DECIMAL(5, 3)           | C_taux                         |
+| H43MTX DECIMAL(11, 2)          | C_montantTaxe                  |
+| H43MHT DECIMAL(11, 2)          | C_montantHt                    |
+| H43PRO CHAR(10)                | F_profil
+
 Utiliser de préférences les alias dans le code pour la lisibilité et compréhension du code.
 
 Les 3 variables à manipuler dans ce programme sont donc : 
