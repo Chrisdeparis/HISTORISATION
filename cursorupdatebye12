@@ -1,0 +1,88 @@
+**free                                                                                                                     
+            ctl-opt option(*nodebugio:*srcstmt) dftactgrp(*no) ;                                                     
+                                                                                                                     
+               dcl-ds emploDs qualified dim(20);                                                                     
+                 EMPNO       CHAR(6);                                                                                
+                 LASTNAME    VARCHAR(15);                                                                            
+                 FIRSTNME    VARCHAR(12);                                                                            
+                 AGE         int(10);                                                                                
+              end-ds;                                                                                               
+            // variable de travail                                                                                  
+            dcl-s RowsFetched int(5) ;                                                                              
+            dcl-s Offset int(10) ;                                                                                  
+            dcl-s w_empno char(6);                                                                                  
+            dcl-s w_lastName varchar(15);                                                                           
+            dcl-s w_firstName varchar(12);                                                                          
+            dcl-s w_age char(2);                                                                                    
+            dcl-s w_message char(50);                                                                               
+            dcl-s i int(5);                                                                                         
+            dcl-s ROWS int(5);                                                                                      
+            dcl-s NbrOfRows int(5) inz(%elem(emploDs));                                                             
+            dcl-s   empno char(6);                                                                                  
+            dcl-s   lastName varchar(15);                                                                           
+            dcl-s   firstNme  varchar(12);                                                                          
+            dcl-s age   int(10);                                                                                    
+                                                                                                                    
+                                                                                                                    
+            dcl-pr test extpgm;                                                                                     
+                *N char(2);                                                                                         
+            end-pr;                                                                                                 
+            dcl-pi test;                                                                                            
+                noRec char(2);                                                                                      
+            end-pi;                                                                                                 
+                 exec sql SET OPTION COMMIT = *NONE;                                                                
+                                                                                                                    
+                exec sql declare c0 cursor for                                                                      
+                         select empno, lastname, firstnme,                                                          
+                           year( current_date ) - year( date(birthdate) ) as age                                    
+                         from employee                                                                              
+                         order by birthdate desc;                                                                   
+                                                                                                                    
+                exec sql open c0;                                                                                   
+                exec sql fetch next from c0                                                                         
+                   for :nbrofrows rows into :emplods;                                                               
+                                                                                                                    
+                 dow sqlcode >=0 and sqlcode <> 100;                                                                
+                          for i = 1 to %int(noREc);                                                                 
+                             w_lastName = %char(emplods(i).lastname);                                               
+                             w_firstName = %char(emplods(i).firstnme);                                              
+                             w_empno = %char(emplods(i).empno);                                                     
+                             w_age = %char(emplods(i).age);                                                         
+                                                                                                                    
+                             lastname = %char(emplods(i).lastname);                                                 
+                             firstnme = %char(emplods(i).firstnme);                                                 
+                             empno   = %char(emplods(i).empno);                                                     
+                             age   =       emplods(i).age;                                                          
+                                                                                                                    
+                 exec sql                                                                                          
+                     update employee a                                                                              
+                        set salary =                                                                                
+                            (select salary from wage b where b.empno =:w_empno)                                     
+                      where a.empno in (select empno from wage where                                                
+                              empno =:w_empno);                                                                     
+                                                                                                                    
+                                                                                                                    
+                             w_message = 'LN: '                                                                     
+                                   + %trim(w_lastName)                                                              
+                                   + ' FN: '                                                                        
+                                   + %trim(w_firstName)                                                             
+                                   + ' EMPNO: '                                                                     
+                                   + %char(w_empno)                                                                 
+                                   +' AGE: '                                                                        
+                                   + %char(w_age)                                                                   
+                                   + '.';                                                                           
+                                                                                                                    
+                       dsply (%trim(w_message));                                                                    
+                                                                                                                    
+                      endfor;                                                                                       
+                      leave;                                                                                        
+                exec sql fetch next from C0                                                                         
+                    for :nbrofrows rows into : emplods;                                                             
+                  enddo;                                                                                            
+                                                                                                                    
+            exec sql close c0;                                                                                     
+                                                                                                                   
+                                                                                                                   
+                  *inlr = *on;                                                                                     
+                                                                                                                  
+
