@@ -125,3 +125,5 @@ Les 3 variables à manipuler dans ce programme sont donc :
 - F_IDPRET
 - F_IDGARGARANTIEINCLUSE
 - C_TAUX
+
+Pour debuger une procedure externe : shift F10
