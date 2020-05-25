@@ -130,4 +130,6 @@ Pour debuger une procedure externe : shift F10
 ## table de version
 Pour pouvoir utiliser les nouvelles colonnes il faut ajouter la bibliothèque de version pour tester en intégration.
 
-addlible adh20140a
+```diff
++ addlible adh20140a
+```
