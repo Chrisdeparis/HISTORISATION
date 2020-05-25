@@ -127,3 +127,7 @@ Les 3 variables à manipuler dans ce programme sont donc :
 - C_TAUX
 
 Pour debuger une procedure externe : shift F10
+## table de version
+Pour pouvoir utiliser les nouvelles colonnes il faut ajouter la bibliothèque de version pour tester en intégration.
+
+addlible adh20140a
