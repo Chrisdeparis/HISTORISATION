@@ -137,5 +137,5 @@ Pour pouvoir utiliser les nouvelles colonnes il faut ajouter la bibliothèque de
 Pour debugger utiliser adh1logpf avec m_error
 ```diff
 + SELECT * FROM adh1logpf WHERE date(logdhe)='2020-05-26' ORDER BY 
-logdhe desc   
++ logdhe desc   
 ```
