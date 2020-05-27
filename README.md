@@ -155,3 +155,8 @@ dcl-c c_Archivage         const(13);
 dcl-c c_OAV               const(4);
 ```
 Au début du programme pour créer l'initialisation et permettre d'envoyer les logs
+```diff
++ -- fichier a1ilog
++ SELECT * FROM BIBCOMMU.a1ilogpf WHERE date(logdhe)='2020-05-27' ORDER BY
++ logdhe desc;   
+```
