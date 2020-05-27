@@ -164,3 +164,8 @@ Au début du programme pour créer l'initialisation et permettre d'envoyer les l
 + logdhe desc;        
 ```
 wrkobjlock pour débloquer une table.
+```diff
++ -- tester la première ligne
++ update WWADHESF.adh1h43pf set c_taux = null where c_taux is not null;
++ commit;
+```
