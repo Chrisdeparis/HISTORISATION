@@ -159,4 +159,7 @@ Au début du programme pour créer l'initialisation et permettre d'envoyer les l
 + -- fichier a1ilog
 + SELECT * FROM BIBCOMMU.a1ilogpf WHERE date(logdhe)='2020-05-27' ORDER BY
 + logdhe desc;   
++ --- visualisation fichier log
++ SELECT * FROM wwadhesf.adh1logpf WHERE date(logdhe)='2020-05-27' ORDER BY
++ logdhe desc;        
 ```
