@@ -170,7 +170,7 @@ wrkobjlock pour débloquer une table.
 + commit;
 ```
 ```sql
-+ -- verifier taux de taxe en sortie de m_gettauxtaxe en fonction du code pays, paysban et la garantie
+-- verifier taux de taxe en sortie de m_gettauxtaxe en fonction du code pays, compagnie et la garantie
 select * from wwannexf/t4ptaxpf
 where x_ciecode = 25
 and f_idpays = 71
