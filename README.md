@@ -169,3 +169,10 @@ wrkobjlock pour débloquer une table.
 + update WWADHESF.adh1h43pf set c_taux = null where c_taux is not null;
 + commit;
 ```
+```sql
++ -- verifier taux de taxe en sortie de m_gettauxtaxe en fonction du code pays, paysban et la garantie
+select * from wwannexf/t4ptaxpf
+where x_ciecode = 25
+and f_idpays = 71
+and taxgar = 15
+```
