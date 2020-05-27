@@ -126,6 +126,13 @@ Les 3 variables à manipuler dans ce programme sont donc :
 - F_IDGARGARANTIEINCLUSE
 - C_TAUX
 
+## M_getTauxTaxe
+L'intéret d'utiliser cette procédure c'est qu'elle retourne le taux à partir de 4 paramètres à renseigner qui sont
+- wdate8 = %dec(wprtdrt); 
+- wgarantie = wh43ggi;
+- wCompagnie = wprtcie; 
+- wcodePays = widpaystaxe;
+
 Pour debuger une procedure externe : shift F10
 ## table de version
 Pour pouvoir utiliser les nouvelles colonnes il faut ajouter la bibliothèque de version pour tester en intégration.
