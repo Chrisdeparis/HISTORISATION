@@ -163,3 +163,4 @@ Au début du programme pour créer l'initialisation et permettre d'envoyer les l
 + SELECT * FROM wwadhesf.adh1logpf WHERE date(logdhe)='2020-05-27' ORDER BY
 + logdhe desc;        
 ```
+wrkobjlock pour débloquer une table.
