@@ -146,3 +146,12 @@ Pour debugger utiliser adh1logpf avec m_error
 + SELECT * FROM adh1logpf WHERE date(logdhe)='2020-05-26' ORDER BY 
 + logdhe desc   
 ```
+
+## Init
+```diff
+/copy QCOPSRC,S_JOBENVDS
+// Déclaration constantes                                                                          
+dcl-c c_Archivage         const(13);                                                                
+dcl-c c_OAV               const(4);
+```
+Au début du programme pour créer l'initialisation et permettre d'envoyer les logs
