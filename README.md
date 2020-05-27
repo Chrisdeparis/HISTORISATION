@@ -149,7 +149,7 @@ Pour debugger utiliser adh1logpf avec m_error
 
 ## Init
 ```diff
-/copy QCOPSRC,S_JOBENVDS
+/copy h1frptechs/QCOPSRC,S_JOBENVDS
 // Déclaration constantes                                                                          
 dcl-c c_Archivage         const(13);                                                                
 dcl-c c_OAV               const(4);
