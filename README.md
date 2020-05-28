@@ -212,67 +212,185 @@ exec sql
     open curs_01;
     
 wsqlcodcurseur = sqlcode;
+      clear wpacggi;
+        clear wpackro;
 
-if wsqlcodcurseur = 0; // pas erreur open curseur    
+      // lecture curseur
+      exec sql
+//      fetch next from curs_01
+//      into :wh43ggi, :wh43kmv;
+        fetch next from curs_02
+        into :wpacggi, :wpackro;
 
-  clear wzones...
-  // lecture curseur
-  exec sql
-  fetch next from curs_01
-  into :wzones;
-  
-  wsqlcodCurseur = sqlcode;  
-  
-  wCountLu=0;
-  dow wsqlcodcurseur = 0 and wCountLu <= wquantiteNum; // boucle jusqu'au param
-    wCountLu += 1; 
-    clear wzones...
-    
-    wErrInd = *off;
-    exec sql
-    select zones
-    into :wzones...
-    
-    if sqlcode = 0;
-    else;
-      wErrInd = *on;
-      m_error('000285'
+      wsqlcodCurseur = sqlcode;
+
+        wCountLu=0;  //
+      dow wsqlcodcurseur = 0 and wCountLu <= wquantiteNum;
+        wCountLu += 1;
+        clear wprtcie;
+        clear wprtban;
+        clear wprtdrt;
+
+          // recuperer prtcie, prtdrt et prtban
+          wErrPret = *off;
+          exec sql
+            select prtcie, prtdrt, prtban
+            into :wprtcie, :wprtdrt, :wprtban
+            from  p0amadpf
+            inner join t4pprtpf on madkro=prtkro
+            where madkmv = :wpackro;
+          if sqlcode=0;
+          else;
+            wErrPret = *on;
+            m_error('000285'
                  :*omit
-                 :  'Erreur - Ind   '
-                  + '-wh43kmv = '
-                  + %char(wh43kmv)
+                 :  'Erreur - Pret   '
+                  + '-wpackro = '
+                  + %char(wpackro)
                   :'*Other'
                  :'INFO'
                  :%char(rc));
-    endif;  
-    if not wErrpret;
-     ... traitements ...
-    endif;
-    // lecture curseur
-    exec sql  
-    fetch next from curs_01
-    into :wzones;
-    if sqlcode=0;
-    else;
-      m_error();
-    endif;
-    wsqlcodcurseur = sqlcode;
+          endif;
+
+      if not wErrPret;
+
+          wErrBan=*off;
+          //recherche pays banque
+          exec sql
+            select f_idpays_taxe
+            into :widpaystaxe
+            from p1abqepf
+            where f_bancode = :wprtban;
+          if sqlcode=0;
+          else;
+            wErrBan = *on;
+            m_error('000307'
+                 :*omit
+                 :  'Erreur - prtban -  '
+                  + %char(wprtban)
+                  + 'sqlcode = '
+                  + %char(sqlcode)
+                  :'*Other'
+                 :'INFO'
+                 :%char(rc));
+          endif;
+          // todo : ajouter test sqlcode
+          errrecherchetauxtaxe = *off;
+          clear TauxTaxeDS;
+          clear rc;
+          clear  wh43tau;
+
+          // implémente les variables
+          wdate8 = %dec(wprtdrt);
+          wgarantie = wpacggi;
+          wCompagnie = wprtcie;
+          wcodePays = widpaystaxe;
+
+          TauxTaxeDS.Pays = wcodePays;
+          TauxTaxeDS.Cie = wCompagnie;
+          TauxTaxeDS.Garantie = wgarantie;
+          TauxTaxeDS.DateCalcul = wdate8;
+
+          //appel m_getTaux
+         rc = m_getTauxTaxe(TauxTaxeDS);
+          if rc = 0;
+            // todo : ajouter update sur adh1h43pf
+            exec sql
+            update adh1pacpf
+              set pactau=:tauxtaxeds.tauxtaxe
+              where current of curs_02;
+
+              if sqlcode=0;              // verification exec sql
+              else;
+                m_error('000490'
+                     :*omit
+                     :  'Erreur - update -  '
+                      + %char(wpactau)
+                      + 'sqlcode = '
+                      + %char(sqlcode)
+                      :'*Other'
+                     :'INFO'
+                     :%char(rc));
+              endif;
+          else;
+            errRechercheTauxTaxe = *on;
+            m_error('000503'
+                 :*omit
+                 :  'Erreur - calcul taux de taxe -  '
+                  + '1ére tentative '
+                  + 'pour garantie/pays/cie/date '
+                  + %char(wpacggi)
+                  + '/71/' + %char(wprtcie)
+                  + %char(wprtdrt)
+                  + ' pour pret '
+                  + %char(wIDPRET)
+                 :'*Other'
+                 :'INFO'
+                 :%char(rc));
+          endif;
+      endif;
+            // lecture curseur
+            exec sql  // todo : déplacer avant enddo
+            fetch next from curs_02
+            into :wpacggi, :wpackro;
+
+            if sqlcode=0; // verification exec sql
+            else;
+             m_error('000527'
+                   :*omit
+                   :  'Erreur - sqlcode-  '
+                    + 'sqlcode = '
+                    + %char(sqlcode)
+                    :'*Other'
+                   :'INFO'
+                   :%char(rc));
+            endif;
+
+          // todo : ajouter wsqlcodcurseur = sqlcode
+          wsqlcodcurseur = sqlcode;
+      enddo;
+      if wsqlcodCurseur = 100;  // todo : à déplacer aprés enddo
+        if wcountlu > 0;
+
+        else;
+         m_error('000544'
+                 :*omit
+                 :  'Erreur - fichier vide -  '
+                  + 'boucle invalide '
+                 :'*Other'
+                 :'INFO'
+                 :%char(rc));
+        endif;
+      else;
+        if wsqlcodcurseur= 0;
+         else;
+         m_error('000555'
+                 :*omit
+                 :  'Erreur - wsqlcodcurseur -  '
+                  + 'boucle invalide '
+                  + 'sqlcode = '
+                  + %char(wsqlcodcurseur)
+                 :'*Other'
+                 :'INFO'
+                 :%char(rc));
+        endif;
+
+      endif;
+
+    //close cursor
+    exec sql
+       close curs_02;
+  else;// erreur sur open cursor
+         m_error('000572'
+                 :*omit
+                 :  'Erreur -open cursor -  '
+                  + 'boucle invalide '
+                  + 'sqlcode = '
+                  + %char(sqlcode)
+                 :'*Other'
+                 :'INFO'
+                 :%char(rc));
   endif;
-  if wsqlcodCurseur = 100;
-    if wcountlu > 0;
-    else;
-    m_error();
-    endif;
-  else;
-    if wsqlcodcurseur=0;
-    else;
-      m_error();
-    endif;
-  endif;
-exec sql
-  close curs_01;
-else;
-  m_error();
-endif;
 endsr;
+
 ```
