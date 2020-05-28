@@ -188,7 +188,7 @@ order by h43kmv
 for update with nc;
 ```
 ## Traitement des exec sql
-Toujours faire le traitement des exec sql pour controler une erreur ou pas.
+Toujours faire le traitement des exec sql juste après pour controler le bon déroulement.
 ```diff
 if sqlcode=0;
 else;
