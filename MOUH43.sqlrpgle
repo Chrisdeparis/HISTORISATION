@@ -67,25 +67,15 @@ from adh1h43pf
 where h43tau is null
 order by h43kmv
 for update with nc;
-//inner join p0amadpf on h43kmv=madkmv
+//inner join p0amadpf on h43kmv=madkmv 
 //inner join t4pprtpf on madkro=prtkro
 
 
 
-// table ADH1PACPF
-//exec sql
-//declare curs_02 cursor for
-//select pacggi, prtcie, prtdrt, packro
-//from adh1pacpf
-//inner join t4pprtpf on packro=prtkro
-//inner join t4papepf on prtnum=apenum and prtord=apeord;
-//where pactau is not null;
 
 //---------- début procédure principale ------------------------------
 
-
 exsr init;
-
   if not ErrInit;
     // controle parametre quantite obligatoire
     exsr controlparam;
@@ -104,6 +94,7 @@ exsr init;
 
 
 //---------- début sub routines ------------------------------
+
 begsr Init;
   clear jobSetIdDs;
   jobsetidds.idDomaine = c_OAV;
@@ -120,10 +111,7 @@ begsr Init;
           :'INFO'
           :%char(rc));
  else;
-
  endif;
-
-
 endsr;
 
 
@@ -132,7 +120,7 @@ begsr controlparam;
   if quantite <> *blank;
     monitor;
     // todo : mettre ici le %dec
-   wquantiteNum = %dec(quantite:8:0); //
+   wquantiteNum = %dec(quantite:8:0); 
     on-error;    // ko
       wErrParm = *on;
     endmon;
@@ -146,34 +134,35 @@ begsr traiterCurseur;
   exec sql
     open curs_01;
 
-  wsqlcodcurseur = sqlcode;
+  wsqlcodcurseur = sqlcode; // definition wsqlcodcurseur
 
   if wsqlcodcurseur = 0; // pas erreur open curseur
 
-        clear wh43ggi;
+        clear wh43ggi; 
         clear wh43kmv;
+        
       // lecture curseur
       exec sql
       fetch next from curs_01
-      into :wh43ggi, :wh43kmv;
+      into :wh43ggi, :wh43kmv; // alimenter zones
 
       wsqlcodCurseur = sqlcode;
 
         wCountLu=0;  //
       dow wsqlcodcurseur = 0 and wCountLu <= wquantiteNum;
-        wCountLu += 1;
+        wCountLu += 1; // incrémentation
         clear wprtcie;
         clear wprtban;
         clear wprtdrt;
 
-          // recuperer prtcie et prtdrt
+          // recuperer prtcie, prtdrt et prtban
           wErrPret = *off;
           exec sql
             select prtcie, prtdrt, prtban
             into :wprtcie, :wprtdrt, :wprtban
             from  p0amadpf
             inner join t4pprtpf on madkro=prtkro
-            where madkmv = :wh43kmv;
+            where madkmv = :wh43kmv; //clé 
           if sqlcode=0;
           else;
             wErrPret = *on;
@@ -209,6 +198,7 @@ begsr traiterCurseur;
                  :'INFO'
                  :%char(rc));
           endif;
+          
           // todo : ajouter test sqlcode
           errrecherchetauxtaxe = *off;
           clear TauxTaxeDS;
@@ -227,13 +217,13 @@ begsr traiterCurseur;
           TauxTaxeDS.DateCalcul = wdate8;
 
           //appel m_getTaux
-         rc = m_getTauxTaxe(TauxTaxeDS);
+         rc = m_getTauxTaxe(TauxTaxeDS); // va nous retourner le taux dans tauxtaxeds.tauxtaxe
           if rc = 0;
             // todo : ajouter update sur adh1h43pf
             exec sql
             update adh1h43pf
               set h43tau=:tauxtaxeds.tauxtaxe
-              where current of curs_01;
+              where current of curs_01; //mise a jour du c_taux
 
               if sqlcode=0;              // verification exec sql
               else;
@@ -265,7 +255,7 @@ begsr traiterCurseur;
           endif;
       endif;
             // lecture curseur
-            exec sql  // todo : déplacer avant enddo
+            exec sql  
             fetch next from curs_01
             into :wh43ggi, :wh43kmv;
 
@@ -284,7 +274,7 @@ begsr traiterCurseur;
           // todo : ajouter wsqlcodcurseur = sqlcode
           wsqlcodcurseur = sqlcode;
       enddo;
-      if wsqlcodCurseur = 100;  // todo : à déplacer aprés enddo
+      if wsqlcodCurseur = 100;  
         if wcountlu > 0;
 
         else;
