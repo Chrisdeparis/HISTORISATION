@@ -204,6 +204,84 @@ else;
           :%char(rc));
 endif;
 ```
+## Template cursor
+```diff
+begsr traiterCurseur;
 
+exec sql
+    open curs_01;
+    
+wsqlcodcurseur = sqlcode;
+
+if wsqlcodcurseur = 0; // pas erreur open curseur    
+
+  clear wzones...
+  // lecture curseur
+  exec sql
+  fetch next from curs_01
+  into :wzones;
+  
+  wsqlcodCurseur = sqlcode;  
+  
+  wCountLu=0;
+  dow wsqlcodcurseur = 0 and wCountLu <= wquantiteNum; // boucle jusqu'au param
+    wCountLu += 1; 
+    clear wzones...
+    
+    wErrInd = *off;
+    exec sql
+    select zones
+    into :wzones...
+    
+    if sqlcode = 0;
+    else;
+      wErrInd = *on;
+      m_error('000285'
+                 :*omit
+                 :  'Erreur - Ind   '
+                  + '-wh43kmv = '
+                  + %char(wh43kmv)
+                  :'*Other'
+                 :'INFO'
+                 :%char(rc));
+    endif;  
+    if not wErrpret;
+     ... traitements ...
+    endif;
+    // lecture curseur
+    exec sql  
+    fetch next from curs_01
+    into :wzones;
+    if sqlcode=0;
+    else;
+      m_error();
+    endif;
+    wsqlcodcurseur = sqlcode;
+  endif;
+  if wsqlcodCurseur = 100;
+    if wcountlu > 0;
+    else;
+    m_error();
+    endif;
+  else;
+    if wsqlcodcurseur=0;
+    else;
+      m_error();
+    endif;
+  endif;
+exec sql
+  close curs_01;
+else;
+  m_error();
+endif;
+endsr
+   
+   
+  
+  
+      
+
+
+```
 
 
