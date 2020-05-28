@@ -274,14 +274,5 @@ exec sql
 else;
   m_error();
 endif;
-endsr
-   
-   
-  
-  
-      
-
-
+endsr;
 ```
-
-
