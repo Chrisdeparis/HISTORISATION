@@ -193,11 +193,11 @@ Toujours faire le traitement des exec sql pour controler une erreur ou pas.
 if sqlcode=0;
 else;
   wErrBan = *on;
-  m_error('000307'
+  m_error('000307' // => la ligne dans le code source
        :*omit
-       :  'Erreur - prtban -  '
+       :  'Erreur - prtban -  ' // préciser le contexte
         + %char(wprtban)
-        + 'sqlcode = '
+        + 'sqlcode = '          // récupérer le sqlcode
         + %char(sqlcode)
         :'*Other'
        :'INFO'
