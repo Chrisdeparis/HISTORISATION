@@ -1,4 +1,5 @@
 # HISTORISATION
+## Développement d'une moulinette : curseur qui va mettre à jour une colonne dans une table
 
 Je souhaite historiser les modifications de taux de taxe en ajoutant la valeur du taux par garantie sur chaque palier de cotisation
 Afin de conserver une trace
