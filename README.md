@@ -177,8 +177,8 @@ where x_ciecode = 25
 and f_idpays = 71
 and taxgar = 15
 ```
-## For Update :warning: :warning:
- Dans la requete sql : le for update n'est pas possible avec des jointures.
+## For Update 
+ Dans la requete sql : le for update n'est pas possible avec des jointures. :warning: :warning:
 ```sql
 declare curs_01 cursor for
 select h43ggi, h43kmv
@@ -186,5 +186,5 @@ from adh1h43pf
 where h43tau is null
 order by h43kmv
 for update with nc;
-```sql
+```
 
