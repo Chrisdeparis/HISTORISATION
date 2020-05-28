@@ -194,14 +194,14 @@ if sqlcode=0;
 else;
   wErrBan = *on;
   m_error('000307' // => la ligne dans le code source
-       :*omit
-       :  'Erreur - prtban -  ' // préciser le contexte
-        + %char(wprtban)
-        + 'sqlcode = '          // récupérer le sqlcode
-        + %char(sqlcode)
-        :'*Other'
-       :'INFO'
-       :%char(rc));
+          :*omit
+          :  'Erreur - prtban -  ' // préciser le contexte
+          + %char(wprtban)
+          + 'sqlcode = '          // récupérer le sqlcode
+          + %char(sqlcode)
+          :'*Other'
+          :'INFO'
+          :%char(rc));
 endif;
 ```
 
