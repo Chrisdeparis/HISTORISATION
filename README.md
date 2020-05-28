@@ -187,4 +187,23 @@ where h43tau is null
 order by h43kmv
 for update with nc;
 ```
+## Traitement des exec sql
+Toujours faire le traitement des exec sql pour controler une erreur ou pas.
+```diff
+if sqlcode=0;
+else;
+  wErrBan = *on;
+  m_error('000307'
+       :*omit
+       :  'Erreur - prtban -  '
+        + %char(wprtban)
+        + 'sqlcode = '
+        + %char(sqlcode)
+        :'*Other'
+       :'INFO'
+       :%char(rc));
+endif;
+```
+
+
 
