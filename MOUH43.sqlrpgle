@@ -1,9 +1,9 @@
 **free
 ctl-opt option(*nodebugio:*srcstmt) dftactgrp(*no) bnddir('OUTILS':'ADHESION');
 
-/copy h1wwadhess/qcopsrc,gettauxds
-/copy h1frptechs/qcopsrc,s_errords
-/copy h1frptechs/qcopsrc,s_jobEnvDs
+/copy qcopsrc,gettauxds
+/copy qcopsrc,s_errords
+/copy qcopsrc,s_jobEnvDs
 
 dcl-ds jobSetIdDs            likeDs(m_jobSetIdDs_t);
 
@@ -67,15 +67,12 @@ from adh1h43pf
 where h43tau is null
 order by h43kmv
 for update with nc;
-//inner join p0amadpf on h43kmv=madkmv 
-//inner join t4pprtpf on madkro=prtkro
-
-
-
 
 //---------- début procédure principale ------------------------------
 
+
 exsr init;
+
   if not ErrInit;
     // controle parametre quantite obligatoire
     exsr controlparam;
@@ -94,7 +91,6 @@ exsr init;
 
 
 //---------- début sub routines ------------------------------
-
 begsr Init;
   clear jobSetIdDs;
   jobsetidds.idDomaine = c_OAV;
@@ -104,7 +100,7 @@ begsr Init;
 
  if rc <> 0;
    errInit = *on;
-   m_error('000221'
+   m_error('000215'
           :*omit
           :'Erreur lors de l''initialisation'
           :'*Other'
@@ -114,13 +110,12 @@ begsr Init;
  endif;
 endsr;
 
-
 begsr controlparam;
   wErrParm = *off;
   if quantite <> *blank;
     monitor;
     // todo : mettre ici le %dec
-   wquantiteNum = %dec(quantite:8:0); 
+   wquantiteNum = %dec(quantite:8:0); //
     on-error;    // ko
       wErrParm = *on;
     endmon;
@@ -134,39 +129,38 @@ begsr traiterCurseur;
   exec sql
     open curs_01;
 
-  wsqlcodcurseur = sqlcode; // definition wsqlcodcurseur
+  wsqlcodcurseur = sqlcode;
 
   if wsqlcodcurseur = 0; // pas erreur open curseur
 
-        clear wh43ggi; 
+        clear wh43ggi;
         clear wh43kmv;
-        
       // lecture curseur
       exec sql
       fetch next from curs_01
-      into :wh43ggi, :wh43kmv; // alimenter zones
+      into :wh43ggi, :wh43kmv;
 
       wsqlcodCurseur = sqlcode;
 
         wCountLu=0;  //
       dow wsqlcodcurseur = 0 and wCountLu <= wquantiteNum;
-        wCountLu += 1; // incrémentation
+        wCountLu += 1;
         clear wprtcie;
         clear wprtban;
         clear wprtdrt;
 
-          // recuperer prtcie, prtdrt et prtban
+          // recuperer prtcie et prtdrt
           wErrPret = *off;
           exec sql
             select prtcie, prtdrt, prtban
             into :wprtcie, :wprtdrt, :wprtban
             from  p0amadpf
             inner join t4pprtpf on madkro=prtkro
-            where madkmv = :wh43kmv; //clé 
+            where madkmv = :wh43kmv;
           if sqlcode=0;
           else;
             wErrPret = *on;
-            m_error('000285'
+            m_error('000279'
                  :*omit
                  :  'Erreur - Pret   '
                   + '-wh43kmv = '
@@ -188,7 +182,7 @@ begsr traiterCurseur;
           if sqlcode=0;
           else;
             wErrBan = *on;
-            m_error('000307'
+            m_error('000301'
                  :*omit
                  :  'Erreur - prtban -  '
                   + %char(wprtban)
@@ -198,7 +192,6 @@ begsr traiterCurseur;
                  :'INFO'
                  :%char(rc));
           endif;
-          
           // todo : ajouter test sqlcode
           errrecherchetauxtaxe = *off;
           clear TauxTaxeDS;
@@ -217,17 +210,17 @@ begsr traiterCurseur;
           TauxTaxeDS.DateCalcul = wdate8;
 
           //appel m_getTaux
-         rc = m_getTauxTaxe(TauxTaxeDS); // va nous retourner le taux dans tauxtaxeds.tauxtaxe
+         rc = m_getTauxTaxe(TauxTaxeDS);
           if rc = 0;
             // todo : ajouter update sur adh1h43pf
             exec sql
             update adh1h43pf
               set h43tau=:tauxtaxeds.tauxtaxe
-              where current of curs_01; //mise a jour du c_taux
+              where current of curs_01;
 
               if sqlcode=0;              // verification exec sql
               else;
-                m_error('000490'
+                m_error('000339'
                      :*omit
                      :  'Erreur - update -  '
                       + %char(wh43tau)
@@ -239,7 +232,7 @@ begsr traiterCurseur;
               endif;
           else;
             errRechercheTauxTaxe = *on;
-            m_error('000503'
+            m_error('000351'
                  :*omit
                  :  'Erreur - calcul taux de taxe -  '
                   + '1ére tentative '
@@ -255,13 +248,13 @@ begsr traiterCurseur;
           endif;
       endif;
             // lecture curseur
-            exec sql  
+            exec sql  // todo : déplacer avant enddo
             fetch next from curs_01
             into :wh43ggi, :wh43kmv;
 
             if sqlcode=0; // verification exec sql
             else;
-             m_error('000527'
+             m_error('000373'
                    :*omit
                    :  'Erreur - sqlcode-  '
                     + 'sqlcode = '
@@ -274,11 +267,11 @@ begsr traiterCurseur;
           // todo : ajouter wsqlcodcurseur = sqlcode
           wsqlcodcurseur = sqlcode;
       enddo;
-      if wsqlcodCurseur = 100;  
+      if wsqlcodCurseur = 100;  // todo : à déplacer aprés enddo
         if wcountlu > 0;
 
         else;
-         m_error('000544'
+         m_error('000390'
                  :*omit
                  :  'Erreur - fichier vide -  '
                   + 'boucle invalide '
@@ -306,7 +299,7 @@ begsr traiterCurseur;
     exec sql
        close curs_01;
   else;// erreur sur open cursor
-         m_error('000572'
+         m_error('000418'
                  :*omit
                  :  'Erreur -open cursor -  '
                   + 'boucle invalide '
