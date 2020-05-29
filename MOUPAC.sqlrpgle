@@ -12,26 +12,13 @@ dcl-ds jobSetIdDs            likeDs(m_jobSetIdDs_t);
 dcl-s wsqlcodCurseur                 int(5);
 dcl-s wprtcie                        zoned(3:0);      //F_CIECODE
 dcl-s wprtban                        zoned(5:0);      //F_BANCODE
-dcl-s wh43ggi                        zoned(5:0);      //F_IDGARGARANTIEINCLUSE
 dcl-s wpacggi                        zoned(5:0);      //F_IDGARGARANTIEINCLUSE
-dcl-s wNbTraite                      int(10);
-dcl-s wh43tau                        zoned(5:3);
 dcl-s wpactau                        zoned(5:3);
-dcl-s wtauxtaxe                      zoned(5:3);
 dcl-s wpackro                        zoned(11:0);
 dcl-s wnbLecture                     int(5);
 dcl-s w_message                      char(50);
-dcl-s w_message2                     char(50);
-dcl-s w_codeEntree                   char(20);
-dcl-s wh43kmv                        zoned(11:0);
-dcl-s w_codeSortie                   packed(5);
-dcl-s w_returnCode                   int(10);
-dcl-s errCheckParm                   ind;
 dcl-s wCountLu                       int(5);
 dcl-s wquantiteNum                   zoned(8);
-dcl-s wErrParm                       ind;
-dcl-s wparm                          zoned(9);
-dcl-s errRechercheTauxTaxe           ind;
 dcl-ds TauxTaxeDS                    likeds(gettauxtaxeds_t);
 dcl-s rc                             int(5);
 dcl-s wIdPret                        packed(11:0);
@@ -41,8 +28,9 @@ dcl-s wcodePays                      packed(5:0);
 dcl-s wprtdrt                        date;
 dcl-s wdate8                         packed(8:0);
 dcl-s widpaystaxe                    zoned(5:0);
-dcl-s wtaxtau                        zoned(5:3);
 dcl-s errGlobale                     ind;
+dcl-s errRechercheTauxTaxe           ind;
+dcl-s wErrParm                       ind;
 dcl-s wErrPret                       ind;
 dcl-s wErrBan                        ind;
 dcl-s errInit                        ind;
@@ -202,7 +190,7 @@ begsr traiterCurseur;
           errrecherchetauxtaxe = *off;
           clear TauxTaxeDS;
           clear rc;
-          clear  wh43tau;
+          clear wpactau;
 
           // implémente les variables
           wdate8 = %dec(wprtdrt);
