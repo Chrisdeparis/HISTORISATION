@@ -1,6 +1,8 @@
-Bonjour Christian, pour le sous fichier je n'ai pas encore regardé, je réserve un temps ce soir, pour la fin du confinement Reynald est en train d'organiser cela avec l'équipe et tu devrais avoir des nouvelles de sa part rapidement.
+Bonjour Christian, pour le sous fichier je n'ai pas encore regardé, je réserve un temps ce soir, pour la fin du 
+confinement Reynald est en train d'organiser cela avec l'équipe et tu devrais avoir des nouvelles de sa part rapidement.
 select * from adh1pacpf order by f_idpret, c_dateeffetpalier
-christele souhaite que l'on attende pour traiter oav-2082 (particularité bpce vie), du coup, je souhaite réserver oav-2113 (le rattrapage des données)  pour christian, 
+christele souhaite que l'on attende pour traiter oav-2082 (particularité bpce vie), du coup, je souhaite 
+réserver oav-2113 (le rattrapage des données)  pour christian, 
 
 select pacggi, prtcie, prtdrt
 from adh1pacpf
