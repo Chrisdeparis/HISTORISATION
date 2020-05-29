@@ -1,9 +1,9 @@
 **free
 ctl-opt option(*nodebugio:*srcstmt) dftactgrp(*no) bnddir('OUTILS':'ADHESION');
 
-/copy h1wwadhess/qcopsrc,gettauxds
-/copy h1frptechs/qcopsrc,s_errords
-/copy h1frptechs/qcopsrc,s_jobEnvDs
+/copy qcopsrc,gettauxds
+/copy qcopsrc,s_errords
+/copy qcopsrc,s_jobEnvDs
 
 dcl-ds jobSetIdDs            likeDs(m_jobSetIdDs_t);
 
@@ -57,9 +57,6 @@ end-pi;
 
 // Déclaration des curseurs
 //--------------------------
-//Lecture du fichier des paliers
-// curseur de lecture
-
 // table ADH1PACPF
 exec sql
 declare curs_02 cursor for
@@ -104,7 +101,7 @@ begsr Init;
 
  if rc <> 0;
    errInit = *on;
-   m_error('000221'
+   m_error('000218'
           :*omit
           :'Erreur lors de l''initialisation'
           :'*Other'
@@ -135,7 +132,6 @@ endsr;
 begsr traiterCurseur;
   // ouverture curseur
   exec sql
-//    open curs_01;
     open curs_02;
 
   wsqlcodcurseur = sqlcode;
@@ -144,11 +140,9 @@ begsr traiterCurseur;
 
         clear wpacggi;
         clear wpackro;
- 
+
       // lecture curseur
       exec sql
-//      fetch next from curs_01
-//      into :wh43ggi, :wh43kmv;
         fetch next from curs_02
         into :wpacggi, :wpackro;
 
@@ -172,7 +166,7 @@ begsr traiterCurseur;
           if sqlcode=0;
           else;
             wErrPret = *on;
-            m_error('000285'
+            m_error('000286'
                  :*omit
                  :  'Erreur - Pret   '
                   + '-wpackro = '
@@ -194,7 +188,7 @@ begsr traiterCurseur;
           if sqlcode=0;
           else;
             wErrBan = *on;
-            m_error('000307'
+            m_error('000308'
                  :*omit
                  :  'Erreur - prtban -  '
                   + %char(wprtban)
@@ -224,7 +218,7 @@ begsr traiterCurseur;
           //appel m_getTaux
          rc = m_getTauxTaxe(TauxTaxeDS);
           if rc = 0;
-            // todo : ajouter update sur adh1h43pf
+            // todo : ajouter update sur adh1pacpf
             exec sql
             update adh1pacpf
               set pactau=:tauxtaxeds.tauxtaxe
@@ -232,7 +226,7 @@ begsr traiterCurseur;
 
               if sqlcode=0;              // verification exec sql
               else;
-                m_error('000490'
+                m_error('000346'
                      :*omit
                      :  'Erreur - update -  '
                       + %char(wpactau)
@@ -244,7 +238,7 @@ begsr traiterCurseur;
               endif;
           else;
             errRechercheTauxTaxe = *on;
-            m_error('000503'
+            m_error('000358'
                  :*omit
                  :  'Erreur - calcul taux de taxe -  '
                   + '1ére tentative '
@@ -266,7 +260,7 @@ begsr traiterCurseur;
 
             if sqlcode=0; // verification exec sql
             else;
-             m_error('000527'
+             m_error('000380'
                    :*omit
                    :  'Erreur - sqlcode-  '
                     + 'sqlcode = '
@@ -283,7 +277,7 @@ begsr traiterCurseur;
         if wcountlu > 0;
 
         else;
-         m_error('000544'
+         m_error('000397'
                  :*omit
                  :  'Erreur - fichier vide -  '
                   + 'boucle invalide '
@@ -294,7 +288,7 @@ begsr traiterCurseur;
       else;
         if wsqlcodcurseur= 0;
          else;
-         m_error('000555'
+         m_error('000408'
                  :*omit
                  :  'Erreur - wsqlcodcurseur -  '
                   + 'boucle invalide '
@@ -311,7 +305,7 @@ begsr traiterCurseur;
     exec sql
        close curs_02;
   else;// erreur sur open cursor
-         m_error('000572'
+         m_error('000425'
                  :*omit
                  :  'Erreur -open cursor -  '
                   + 'boucle invalide '
