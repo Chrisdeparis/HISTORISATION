@@ -402,5 +402,5 @@ endsr;
 Pour verifier l'état de la commande et vérifier si le batch est actif.
 
 ## Bibliothèque pour les programmes
-Toujours placer les programmes dans H1WWADHESO :warning: :warning:
+Toujours placer les programmes dans H1WWADHESO :warning: :warning: dans Arcade.
 
