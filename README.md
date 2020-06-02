@@ -207,189 +207,190 @@ endif;
 ## Template cursor
 ```diff
 begsr traiterCurseur;
+  // ouverture curseur
+  exec sql
+  open curs_01;
 
-exec sql
-    open curs_01;
-    
-wsqlcodcurseur = sqlcode;
-      clear wpacggi;
-        clear wpackro;
+  wsqlcodcurseur = sqlcode;
 
-      // lecture curseur
+  if wsqlcodcurseur = 0; // pas erreur open curseur
+
+    clear wh43ggi;
+    clear wh43kmv;
+    // lecture curseur
+    exec sql
+    fetch next from curs_01
+    into :wh43ggi, :wh43kmv;
+
+    wsqlcodCurseur = sqlcode;
+
+    wNbLignesLues=0;  //
+    dow wsqlcodcurseur = 0 and wNbLignesLues <= wnbLigneATraiter;
+      wNbLignesLues += 1;
+      clear wprtcie;
+      clear wprtban;
+      clear wprtdrt;
+
+      // recuperer prtcie et prtdrt
+      wErrPret = *off;
       exec sql
-//      fetch next from curs_01
-//      into :wh43ggi, :wh43kmv;
-        fetch next from curs_02
-        into :wpacggi, :wpackro;
-
-      wsqlcodCurseur = sqlcode;
-
-        wCountLu=0;  //
-      dow wsqlcodcurseur = 0 and wCountLu <= wquantiteNum;
-        wCountLu += 1;
-        clear wprtcie;
-        clear wprtban;
-        clear wprtdrt;
-
-          // recuperer prtcie, prtdrt et prtban
-          wErrPret = *off;
-          exec sql
-            select prtcie, prtdrt, prtban
-            into :wprtcie, :wprtdrt, :wprtban
-            from  p0amadpf
-            inner join t4pprtpf on madkro=prtkro
-            where madkmv = :wpackro;
-          if sqlcode=0;
-          else;
-            wErrPret = *on;
-            m_error('000285'
-                 :*omit
-                 :  'Erreur - Pret   '
-                  + '-wpackro = '
-                  + %char(wpackro)
-                  :'*Other'
-                 :'INFO'
-                 :%char(rc));
-          endif;
+      select prtcie, prtdrt, prtban
+      into :wprtcie, :wprtdrt, :wprtban
+      from  p0amadpf
+      inner join t4pprtpf on madkro=prtkro
+      where madkmv = :wh43kmv;
+      if sqlcode=0;
+      else;
+        wErrPret = *on;
+        m_error('000303'
+             :*omit
+             :  'Erreur - Pret   '
+              + '-wh43kmv = '
+              + %char(wh43kmv)
+              :'*Other'
+             :'INFO'
+             :%char(rc));
+      endif;
 
       if not wErrPret;
 
-          wErrBan=*off;
-          //recherche pays banque
+        wErrBan=*off;
+        //recherche pays banque
+        exec sql
+        select f_idpays_taxe
+        into :widpaystaxe
+        from p1abqepf
+        where f_bancode = :wprtban;
+        if sqlcode=0;
+        else;
+          wErrBan = *on;
+          m_error('000325'
+               :*omit
+               :  'Erreur - prtban -  '
+                + %char(wprtban)
+                + 'sqlcode = '
+                + %char(sqlcode)
+                :'*Other'
+               :'INFO'
+               :%char(rc));
+        endif;
+        // todo : ajouter test sqlcode
+        errrecherchetauxtaxe = *off;
+        clear TauxTaxeDS;
+        clear rc;
+        clear  wh43tau;
+
+        // implémente les variables
+        wdate8 = %dec(wprtdrt);
+        wgarantie = wh43ggi;
+        wCompagnie = wprtcie;
+        wcodePays = widpaystaxe;
+
+        TauxTaxeDS.Pays = wcodePays;
+        TauxTaxeDS.Cie = wCompagnie;
+        TauxTaxeDS.Garantie = wgarantie;
+        TauxTaxeDS.DateCalcul = wdate8;
+
+        //appel m_getTaux
+        rc = m_getTauxTaxe(TauxTaxeDS);
+        if rc = 0;
+          // todo : ajouter update sur adh1h43pf
           exec sql
-            select f_idpays_taxe
-            into :widpaystaxe
-            from p1abqepf
-            where f_bancode = :wprtban;
-          if sqlcode=0;
+          update adh1h43pf
+          set h43tau=:tauxtaxeds.tauxtaxe
+          where current of curs_01;
+
+          if sqlcode=0;              // verification exec sql
+            wCountMAJ += 1;
           else;
-            wErrBan = *on;
-            m_error('000307'
+            m_error('000364'
                  :*omit
-                 :  'Erreur - prtban -  '
-                  + %char(wprtban)
+                 :  'Erreur - update - C_TAUX '
+                  + %char(wh43tau)
                   + 'sqlcode = '
                   + %char(sqlcode)
                   :'*Other'
                  :'INFO'
                  :%char(rc));
           endif;
-          // todo : ajouter test sqlcode
-          errrecherchetauxtaxe = *off;
-          clear TauxTaxeDS;
-          clear rc;
-          clear  wh43tau;
-
-          // implémente les variables
-          wdate8 = %dec(wprtdrt);
-          wgarantie = wpacggi;
-          wCompagnie = wprtcie;
-          wcodePays = widpaystaxe;
-
-          TauxTaxeDS.Pays = wcodePays;
-          TauxTaxeDS.Cie = wCompagnie;
-          TauxTaxeDS.Garantie = wgarantie;
-          TauxTaxeDS.DateCalcul = wdate8;
-
-          //appel m_getTaux
-         rc = m_getTauxTaxe(TauxTaxeDS);
-          if rc = 0;
-            // todo : ajouter update sur adh1h43pf
-            exec sql
-            update adh1pacpf
-              set pactau=:tauxtaxeds.tauxtaxe
-              where current of curs_02;
-
-              if sqlcode=0;              // verification exec sql
-              else;
-                m_error('000490'
-                     :*omit
-                     :  'Erreur - update -  '
-                      + %char(wpactau)
-                      + 'sqlcode = '
-                      + %char(sqlcode)
-                      :'*Other'
-                     :'INFO'
-                     :%char(rc));
-              endif;
-          else;
-            errRechercheTauxTaxe = *on;
-            m_error('000503'
-                 :*omit
-                 :  'Erreur - calcul taux de taxe -  '
-                  + '1ére tentative '
-                  + 'pour garantie/pays/cie/date '
-                  + %char(wpacggi)
-                  + '/71/' + %char(wprtcie)
-                  + %char(wprtdrt)
-                  + ' pour pret '
-                  + %char(wIDPRET)
-                 :'*Other'
-                 :'INFO'
-                 :%char(rc));
-          endif;
-      endif;
-            // lecture curseur
-            exec sql  // todo : déplacer avant enddo
-            fetch next from curs_02
-            into :wpacggi, :wpackro;
-
-            if sqlcode=0; // verification exec sql
-            else;
-             m_error('000527'
-                   :*omit
-                   :  'Erreur - sqlcode-  '
-                    + 'sqlcode = '
-                    + %char(sqlcode)
-                    :'*Other'
-                   :'INFO'
-                   :%char(rc));
-            endif;
-
-          // todo : ajouter wsqlcodcurseur = sqlcode
-          wsqlcodcurseur = sqlcode;
-      enddo;
-      if wsqlcodCurseur = 100;  // todo : à déplacer aprés enddo
-        if wcountlu > 0;
-
         else;
-         m_error('000544'
-                 :*omit
-                 :  'Erreur - fichier vide -  '
-                  + 'boucle invalide '
-                 :'*Other'
-                 :'INFO'
-                 :%char(rc));
+          errRechercheTauxTaxe = *on;
+          m_error('000376'
+               :*omit
+               :  'Erreur - calcul taux de taxe -  '
+                + '1ére tentative '
+                + 'pour garantie/ '
+                + %char(wh43ggi)
+                + '/71/' + %char(wprtcie)
+                + %char(wprtdrt)
+                + ' pour pret '
+                + %char(wIDPRET)
+               :'*Other'
+               :'INFO'
+               :%char(rc));
         endif;
-      else;
-        if wsqlcodcurseur= 0;
-         else;
-         m_error('000555'
-                 :*omit
-                 :  'Erreur - wsqlcodcurseur -  '
-                  + 'boucle invalide '
-                  + 'sqlcode = '
-                  + %char(wsqlcodcurseur)
-                 :'*Other'
-                 :'INFO'
-                 :%char(rc));
-        endif;
+      endif;
+      // lecture curseur
+      exec sql  // todo : déplacer avant enddo
+      fetch next from curs_01
+      into :wh43ggi, :wh43kmv;
 
+      if sqlcode=0; // verification exec sql
+      else;
+        m_error('000398'
+              :*omit
+              :  'Erreur - sqlcode-  '
+               + 'sqlcode = '
+               + %char(sqlcode)
+               :'*Other'
+              :'INFO'
+              :%char(rc));
       endif;
 
-    //close cursor
-    exec sql
-       close curs_02;
+      // todo : ajouter wsqlcodcurseur = sqlcode
+      wsqlcodcurseur = sqlcode;
+    enddo;
+    if wsqlcodCurseur = 100;  // todo : à déplacer aprés enddo
+      if wNbLignesLues > 0;
+
+      else;
+        m_error('000415'
+                :*omit
+                :  'Erreur - fichier vide -  '
+                 + 'boucle invalide '
+                :'*Other'
+                :'INFO'
+                :%char(rc));
+      endif;
+    else;
+      if wsqlcodcurseur= 0;
+      else;
+        m_error('000426'
+                :*omit
+                :  'Erreur - wsqlcodcurseur -  '
+                 + 'boucle invalide '
+                 + 'sqlcode = '
+                 + %char(wsqlcodcurseur)
+                :'*Other'
+                :'INFO'
+                :%char(rc));
+      endif;
+
+    endif;
+
+  //close cursor
+  exec sql
+  close curs_01;
   else;// erreur sur open cursor
-         m_error('000572'
-                 :*omit
-                 :  'Erreur -open cursor -  '
-                  + 'boucle invalide '
-                  + 'sqlcode = '
-                  + %char(sqlcode)
-                 :'*Other'
-                 :'INFO'
-                 :%char(rc));
+    m_error('000443'
+            :*omit
+            :  'Erreur -open cursor -  '
+             + 'boucle invalide '
+             + 'sqlcode = '
+             + %char(sqlcode)
+            :'*Other'
+            :'INFO'
+            :%char(rc));
   endif;
 endsr;
 
