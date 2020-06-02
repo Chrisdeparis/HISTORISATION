@@ -133,7 +133,7 @@ L'intéret d'utiliser cette procédure c'est qu'elle retourne le taux à partir 
 - wgarantie = wh43ggi;
 - wCompagnie = wprtcie; 
 - wcodePays = widpaystaxe;
-
+Cette fonction retourne le taux de taux de taxe en fonction de la date. On est bon.
 Pour debuger une procedure externe : shift F10
 ## table de version
 Pour pouvoir utiliser les nouvelles colonnes il faut ajouter la bibliothèque de version pour tester en intégration.
