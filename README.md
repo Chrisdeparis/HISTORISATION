@@ -397,7 +397,7 @@ endsr;
 ```
 ## Batch
 ```diff
-+ SBMJOB CMD(CALL PGM(MOUPAC) PARM('*all')) JOB(MOUPAC) USER(A0OAV)
++ SBMJOB CMD(CALL PGM(MOUPAC)) JOB(MOUPAC) USER(A0OAV)
 + wrksbmjob
 ```
 Pour verifier l'état de la commande et vérifier si le batch est actif.
