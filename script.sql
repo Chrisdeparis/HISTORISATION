@@ -252,57 +252,62 @@ order by packro
 for update with nc;
 
 select prtban
-            from  WWADHESF.p0amadpf
-            inner join WWADHESF.t4pprtpf on madkro=prtkro
-            where madkmv = packro;
+from  WWADHESF.p0amadpf
+inner join WWADHESF.t4pprtpf on madkro=prtkro
+where madkmv = packro;
             
-            select prtban
-            from  WWADHESF.p0amadpf
-            inner join WWADHESF.t4pprtpf on madkro=prtkro
-            where madkmv = h43kmv;
+select prtban
+from  WWADHESF.p0amadpf
+inner join WWADHESF.t4pprtpf on madkro=prtkro
+where madkmv = h43kmv;
             
-            -- recupérer prtcie prtdrt
-            select prtcie, prtdrt, prtban
-            from  WWADHESF.p0amadpf
-            inner join WWADHESF.t4pprtpf on madkro=prtkro
-            where madkmv = 4867337;
+-- recupérer prtcie prtdrt
+select prtcie, prtdrt, prtban
+from  WWADHESF.p0amadpf
+inner join WWADHESF.t4pprtpf on madkro=prtkro
+where madkmv = 4867337;
             
-            --recherche prtban
-            select prtban
-            from  WWADHESF.p0amadpf
-            inner join WWADHESF.t4pprtpf on madkro=prtkro
-            where madkmv = 4295351;  
+--recherche prtban
+select prtban
+from  WWADHESF.p0amadpf
+inner join WWADHESF.t4pprtpf on madkro=prtkro
+where madkmv = 4295351;  
             
             
-            select * from WWADHESF.adh1h43pf;
-            select * from WWADHESF.adh1pacpf;
-            select * from WWADHESF.p0amadpf;
+select * from WWADHESF.adh1h43pf;
+select * from WWADHESF.adh1pacpf;
+select * from WWADHESF.p0amadpf;
             
-            --  error pret prtcie, prtdrt et prtban vides
-            select prtcie, prtdrt, prtban
-            from  WWADHESF.p0amadpf
-            inner join WWADHESF.t4pprtpf on madkro=prtkro
-            where madkmv = 36730484 ;
-            -- erreur OAV - Taxe - QPADEV000L - MOUH43 - 000279 - (liste Programme :/MOUH43) : Erreur - Pret   -wh43kmv = 36730484                          
+--  error pret prtcie, prtdrt et prtban vides
+select prtcie, prtdrt, prtban
+from  WWADHESF.p0amadpf
+inner join WWADHESF.t4pprtpf on madkro=prtkro
+where madkmv = 36730484 ;
+-- erreur OAV - Taxe - QPADEV000L - MOUH43 - 000279 - (liste Programme :/MOUH43) : Erreur - Pret   -wh43kmv = 36730484                          
             
-            -- zones à vides
-            --OAV - Archivage - QPADEV000L - MOUPAC - 000286 - (liste Programme :/MOUPAC) : Erreur - Pret   -wpackro = 0  
-             select prtcie, prtdrt, prtban
-            from  WWADHESF.p0amadpf
-            inner join WWADHESF.t4pprtpf on madkro=prtkro
-            where madkmv = 0;                                                                     
+-- zones à vides
+--OAV - Archivage - QPADEV000L - MOUPAC - 000286 - (liste Programme :/MOUPAC) : Erreur - Pret   -wpackro = 0  
+select prtcie, prtdrt, prtban
+from  WWADHESF.p0amadpf
+inner join WWADHESF.t4pprtpf on madkro=prtkro
+where madkmv = 0;                                                                     
            
-           select *from WWADHESF.adh1pacpf where packro=4295327;
-           select * from WWADHESF.adh1h43pf;
+select *from WWADHESF.adh1pacpf where packro=4295327;
+select * from WWADHESF.adh1h43pf;
            
-           select packro, pactau from WWADHESF.adh1pacpf
-           where packro=4939217;
+select packro, pactau from WWADHESF.adh1pacpf
+where packro=4939217;
            
-           select * 
+select * 
   from WWADHESF.pretprioritaire; 
   update 
   WWADHESF.pretprioritaire
   set traite='N';
   commit;
+
+-- ajouter  enregistrements dans table pretprioritaire clé du curseur idpret
+  insert into 
+  WWADHESF.pretprioritaire(idpret, traite)
+  values (4296188 , 'N');
            
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
