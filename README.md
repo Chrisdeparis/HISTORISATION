@@ -405,3 +405,19 @@ Pour verifier l'état de la commande et vérifier si le batch est actif.
 ## Bibliothèque pour les programmes
 Toujours placer les programmes dans H1WWADHESO :warning: :warning: dans Arcade.
 
+## CALL MOUPAC
+```diff
+select * 
+  from WWADHESF.pretprioritaire; 
+```
+| IDPRET   | TRAITE  |
+| :------: | :-----: |
+| 4295327	 |   O     |
+| 4295351	 |  O      |
+| 4296188	 |  O      |
+
+En analysant la table ADH1PACPF on va donc voir les MAJ du C_TAUX qui sont effectuées pour chaque clé IDPRET correspondantes.
+```sql
+select *from WWADHESF.adh1pacpf where packro=4295327;
+select *from WWADHESF.adh1pacpf where packro=4295351;
+select *from WWADHESF.adh1pacpf where packro=4296188;
