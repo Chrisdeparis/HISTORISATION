@@ -9,7 +9,8 @@ dcl-ds jobSetIdDs            likeDs(m_jobSetIdDs_t);
 
 
 //-- Variables de travail
-dcl-s wsqlcodCurseur                 int(5);
+dcl-s wsqlcodcurseur                 int(5);
+dcl-s wsqlcodcurseur2                int(5);
 dcl-s wprtcie                        zoned(3:0);      //F_CIECODE
 dcl-s wprtban                        zoned(5:0);      //F_BANCODE
 dcl-s wpacggi                        zoned(5:0);      //F_IDGARGARANTIEINCLUSE
@@ -32,13 +33,15 @@ dcl-s errGlobale                     ind;
 dcl-s errRechercheTauxTaxe           ind;
 dcl-s wErrParm                       ind;
 dcl-s wErrPret                       ind;
+dcl-s wErrUpdateTraite               ind;
 dcl-s wErrBan                        ind;
 dcl-s errInit                        ind;
 dcl-s werrCountLine                  ind;
 dcl-s wCountMAJ                      int(10);
+dcl-s wtraite                        char(1);
 // Déclaration constantes
-dcl-c c_Archivage         const(13);
-dcl-c c_OAV               const(4);
+dcl-c c_Archivage                    const(13);
+dcl-c c_OAV                          const(4);
 
 dcl-pi *n;
   //paremeter list
@@ -47,12 +50,20 @@ end-pi;
 
 // Déclaration des curseurs
 //--------------------------
+// TABLE PRETPRIORITAIRE
+exec sql
+  declare curs_01 cursor for
+  select idpret, traite
+  from pretprioritaire
+  where traite='N'
+  for update with nc;
+
 // table ADH1PACPF
 exec sql
 declare curs_02 cursor for
 select pacggi, packro
 from adh1pacpf
-where pactau is null
+where pactau is null and packro=:widpret
 order by packro
 for update with nc;
 
@@ -63,13 +74,8 @@ exsr init;
 
 if not ErrInit;
   // controle parametre quantiteParm obligatoire
-  exsr controlparam;
   // todo : ajouter test sur werrParm pour ne pas executer traiter curseur
-  if not werrParm;
     exsr traiterCurseur;
-  else;
-    errGlobale = *on;
-  endif;
 else;
   errGlobale = *on;
 
@@ -106,50 +112,106 @@ begsr Init;
   endif;
 endsr;
 
-
-begsr controlparam;
-  wErrParm = *off;
-  if quantiteParm <> *blank;
-        if quantiteParm='*all';
-          exec sql
-          select count(*)
-          into :wnbligneatraiter
-          from adh1pacpf;
-          if sqlcode=0;
-          else;
-            werrCountLine = *on;
-            m_error('000268'
-                    :*omit
-                    :  'Erreur - wnbligneatraiter   '
-                     + 'sqlcode = '
-                     + %char(sqlcode)
-                    :'*Other'
-                    :'INFO'
-                    :%char(rc));
-          endif;
-        else;
-          wErrParm = *on;
-          monitor;
-          // todo : mettre ici le %dec
-          wnbLigneATraiter = %dec(quantiteParm:8:0); //
-
-          on-error;    // ko
-            wErrParm = *on;
-          endmon;
-        endif;
-  else;
-    wErrParm = *on;
-  endif;
-endsr;
-
 begsr traiterCurseur;
   // ouverture curseur
   exec sql
-  open curs_02;
+  open curs_01;
 
   wsqlcodcurseur = sqlcode;
 
   if wsqlcodcurseur = 0; // pas erreur open curseur
+
+    clear widpret;
+    clear wtraite;
+
+    // lecture curseur
+    exec sql
+      fetch next from curs_01
+      into :widpret, :wtraite;
+
+    wsqlcodcurseur = sqlcode;
+
+    wNbLignesLues=0;  //
+    dow wsqlcodcurseur = 0;
+      // Traitement d'un pret
+      exsr TraiterPret;
+
+      // update pret prioritaire
+      exec sql
+        update pretprioritaire
+          set traite='O'
+          where current of curs_01;
+      if sqlcode=0;
+      else;
+        wErrUpdateTraite = *on;
+        m_error('000284'
+              :*omit
+              :  'Erreur - Update Traite-  '
+               + 'sqlcode = '
+               + %char(sqlcode)
+               :'*Other'
+              :'INFO'
+              :%char(rc));
+      endif;
+      // fetch curs_01
+      exec sql
+        fetch next from curs_01
+        into :widpret, :wtraite;
+
+      wsqlcodcurseur = sqlcode;
+    enddo;
+    if wsqlcodcurseur = 100;  // todo : à déplacer aprés enddo
+      if wNbLignesLues > 0;
+
+      else;
+        m_error('000402'
+                :*omit
+                :  'Erreur - fichier vide -  '
+                 + 'boucle invalide '
+                :'*Other'
+                :'INFO'
+                :%char(rc));
+      endif;
+    else;
+      if wsqlcodcurseur= 0;
+      else;
+        m_error('000413'
+                :*omit
+                :  'Erreur - wsqlcodcurseur -  '
+                 + 'boucle invalide '
+                 + 'sqlcode = '
+                 + %char(wsqlcodcurseur)
+                :'*Other'
+                :'INFO'
+                :%char(rc));
+      endif;
+    endif;
+  //close cursor
+  exec sql
+    close curs_01;
+  else;// erreur sur open cursor
+    m_error('000428'
+            :*omit
+            :  'Erreur -open cursor -  '
+             + 'boucle invalide '
+             + 'sqlcode = '
+             + %char(sqlcode)
+            :'*Other'
+            :'INFO'
+            :%char(rc));
+  endif;
+endsr;
+
+
+begsr TraiterPret;
+  wCountMAJ=0;
+  // ouverture curseur
+  exec sql
+  open curs_02;
+
+  wsqlcodcurseur2 = sqlcode;
+
+  if wsqlcodcurseur2 = 0; // pas erreur open curseur
 
     clear wpacggi;
     clear wpackro;
@@ -159,10 +221,10 @@ begsr traiterCurseur;
     fetch next from curs_02
     into :wpacggi, :wpackro;
 
-    wsqlcodCurseur = sqlcode;
+    wsqlcodcurseur2 = sqlcode;
 
     wNbLignesLues=0;  //
-    dow wsqlcodcurseur = 0 and wNbLignesLues <= wnbLigneATraiter;
+    dow wsqlcodcurseur2 = 0;
       wNbLignesLues += 1;
       clear wprtcie;
       clear wprtban;
@@ -174,13 +236,13 @@ begsr traiterCurseur;
       select  prtcie, prtdrt, prtban
       into  :wprtcie, :wprtdrt, :wprtban
       from t4pprtpf
-      where prtkro = :wpackro;
+      where prtkro = :widpret;
 
 
       if sqlcode=0;
       else;
         werrpret = *on;
-        m_error('000331'
+        m_error('000480'
              :*omit
              :  'Erreur - Pret   '
               + '-wpackro = '
@@ -202,7 +264,7 @@ begsr traiterCurseur;
         if sqlcode=0;
         else;
           wErrBan = *on;
-          m_error('000353'
+          m_error('000502'
                :*omit
                :  'Erreur - prtban -  '
                 + %char(wprtban)
@@ -241,7 +303,7 @@ begsr traiterCurseur;
           if sqlcode=0;              // verification exec sql
             wCountMAJ += 1;
           else;
-            m_error('000392'
+            m_error('000541'
                  :*omit
                  :  'Erreur - update -  '
                   + %char(wpactau)
@@ -253,7 +315,7 @@ begsr traiterCurseur;
           endif;
         else;
           errRechercheTauxTaxe = *on;
-          m_error('000404'
+          m_error('000553'
                :*omit
                :  'Erreur - calcul taux de taxe -  '
                 + '1ére tentative '
@@ -273,26 +335,16 @@ begsr traiterCurseur;
       fetch next from curs_02
       into :wpacggi, :wpackro;
 
-      if sqlcode=0; // verification exec sql
-      else;
-        m_error('000426'
-              :*omit
-              :  'Erreur - sqlcode-  '
-               + 'sqlcode = '
-               + %char(sqlcode)
-               :'*Other'
-              :'INFO'
-              :%char(rc));
-      endif;
 
-      // todo : ajouter wsqlcodcurseur = sqlcode
-      wsqlcodcurseur = sqlcode;
+
+      // todo : ajouter wsqlcodcurseur2 = sqlcode
+      wsqlcodcurseur2 = sqlcode;
     enddo;
-    if wsqlcodCurseur = 100;  // todo : à déplacer aprés enddo
+    if wsqlcodcurseur2 = 100;  // todo : à déplacer aprés enddo
       if wNbLignesLues > 0;
 
       else;
-        m_error('000443'
+        m_error('000597'
                 :*omit
                 :  'Erreur - fichier vide -  '
                  + 'boucle invalide '
@@ -301,26 +353,24 @@ begsr traiterCurseur;
                 :%char(rc));
       endif;
     else;
-      if wsqlcodcurseur= 0;
+      if wsqlcodcurseur2= 0;
       else;
-        m_error('000454'
+        m_error('000608'
                 :*omit
-                :  'Erreur - wsqlcodcurseur -  '
+                :  'Erreur - wsqlcodcurseur2 -  '
                  + 'boucle invalide '
                  + 'sqlcode = '
-                 + %char(wsqlcodcurseur)
+                 + %char(wsqlcodcurseur2)
                 :'*Other'
                 :'INFO'
                 :%char(rc));
       endif;
-
     endif;
-
   //close cursor
   exec sql
-  close curs_02;
+    close curs_02;
   else;// erreur sur open cursor
-    m_error('000471'
+    m_error('000623'
             :*omit
             :  'Erreur -open cursor -  '
              + 'boucle invalide '
@@ -330,4 +380,5 @@ begsr traiterCurseur;
             :'INFO'
             :%char(rc));
   endif;
-endsr; 
+endsr;
+ 
