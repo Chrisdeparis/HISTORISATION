@@ -406,6 +406,8 @@ Pour verifier l'état de la commande et vérifier si le batch est actif.
 Toujours placer les programmes dans H1WWADHESO :warning: :warning: dans Arcade.
 
 ## CALL MOUPAC
+Le programme MOUPAC traite dans son curseur les idPret quand traite='N'.
+Quand la moulinette se passe normalement traite='O'; :smile: :smile:
 ```diff
 select * 
   from WWADHESF.pretprioritaire; 
