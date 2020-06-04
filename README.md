@@ -418,6 +418,9 @@ select *
 | 4295351	 |  O      |
 | 4296188	 |  O      |
 
+On peut consulter le fichier de logs pour voir le bon déroulement du call de moupac.
+![alt tag](https://github.com/Chrisdeparis/HISTORISATION/blob/master/Capturelogmoupac.PNG)
+
 En analysant la table ADH1PACPF on va donc voir les MAJ du C_TAUX qui sont effectuées pour chaque clé IDPRET correspondantes.
 ```sql
 select *from WWADHESF.adh1pacpf where packro=4295327;
