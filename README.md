@@ -429,6 +429,8 @@ select *from WWADHESF.adh1pacpf where packro=4296188;
 ```
 ![alt tag](https://github.com/Chrisdeparis/HISTORISATION/blob/master/Capture4296188.PNG)
 ## CALL [MOUH43](https://github.com/Chrisdeparis/HISTORISATION/blob/master/MOUH43.sqlrpgle)
+
+Pour cette moulinette, j'utilise en paramètre le nombre total d'enregistrements de la table.
 ```sql
  select * from WWADHESF.adh1h43pf;
  ```
